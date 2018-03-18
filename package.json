@@ -1,0 +1,25 @@
+{
+  "name": "nodebot",
+  "version": "1.0.1",
+  "description": "Robotframework for nodejs",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node ./index.js",
+    "test": "node ./index.js -test"
+  },
+  "keywords": [
+    "Robot",
+    "Framework",
+    "Testing",
+    "Keyword",
+    "driven"
+  ],
+  "author": "Samick.Hsu <boneache@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.1"
+  }
+}
