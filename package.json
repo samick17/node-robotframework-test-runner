@@ -10,7 +10,7 @@
     "start": "node ./index.js",
     "runtest": "node ./index.js -test",
     "robot": "robot ./testcases/test.txt",
-    "test": "node_modules/.bin/mocha -w ./test/**/*.mocha.js"
+    "test": "node_modules/.bin/mocha ./test/**/*.mocha.js"
   },
   "keywords": [
     "RobotFramework",
