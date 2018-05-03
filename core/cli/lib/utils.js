@@ -30,24 +30,34 @@
 	module.exports = {
 		isDefined: function() {
 			var args = arguments;
-			if(Array.isArray(args)) {
-				for(var i in args) {
-					var arg = args[i];
+			var argsToTest;
+			if(args.length === 1) {
+				argsToTest = args[0];
+			} else {
+				argsToTest = args;
+			}
+			if(Array.isArray(argsToTest)) {
+				for(var i in argsToTest) {
+					var arg = argsToTest[i];
 					if(typeof arg === 'undefined') {
 						return false;
 					}
 				}
 				return true;
 			} else {
-				var typeofArgs = typeof args;
+				var typeofArgs = typeof argsToTest;
 				switch(typeofArgs) {
 					case 'object':
-					for(var i in args) {
-						var arg = args[i];
+					for(var i in argsToTest) {
+						var arg = argsToTest[i];
 						if(typeof arg === 'undefined') {
 							return false;
 						}
 					}
+					return true;
+					case 'string':
+					return true;
+					case 'number':
 					return true;
 					default:
 					return false;
@@ -112,7 +122,7 @@
 		getArgumentsRange: function(data, from, to) {
 			var args = [];
 			to = to || data.length;
-			for(var i = from; i < to; i++) {
+			for(var i = from; i <= to; i++) {
 				args.push(data[i]);
 			}
 			return args;
