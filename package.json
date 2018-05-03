@@ -8,8 +8,9 @@
   },
   "scripts": {
     "start": "node ./index.js",
-    "test": "node ./index.js -test",
-    "robot": "robot ./testcases/test.txt"
+    "runtest": "node ./index.js -test",
+    "robot": "robot ./testcases/test.txt",
+    "test": "node_modules/.bin/mocha -w ./test/**/*.mocha.js"
   },
   "keywords": [
     "RobotFramework",
@@ -24,5 +25,9 @@
     "clipboardy": "^1.2.3",
     "robotremote": "^1.3.0",
     "xmlrpc": "^1.3.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "should": "^13.2.1"
   }
 }
