@@ -218,12 +218,10 @@
     process.exit();
   });
   registerKeyEventHandler('CtrlV', () => {
-    Clipboard.getClipboardText()
-    .then((text) => {
-      chunk += text;
-      printMessage(text);
-      handler();
-    });
+    var text = Clipboard.getClipboardText();
+    chunk += text;
+    printMessage(text);
+    handler();
   });
   registerKeyEventHandler('UpArrow', () => {
     autoCompleteWithHistory(-1);
