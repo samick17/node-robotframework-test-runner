@@ -21,8 +21,10 @@
 		io.start()
 		.then(() => {
 			io.read('>', (text, callback) => {
-				if(text in commandHandlers) {
-					commandHandlers[text](callback);
+				var textArray = text.split(' ');
+				cmd = textArray[0];
+				if(cmd in commandHandlers) {
+					commandHandlers[cmd](textArray.slice(1), callback);
 				}
 			});
 		});

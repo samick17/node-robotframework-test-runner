@@ -2,7 +2,7 @@
 Library           Remote    http://${HOST}:${PORT}
 
 *** Variables ***
-${HOST}           localhost
+${HOST}           127.0.0.1
 ${PORT}           8270
 
 *** Test Cases ***
@@ -10,14 +10,8 @@ Count Items in Directory
     ${items1} =    Count Items In Directory    ${CURDIR}
     ${items2} =    Count Items In Directory    ${TEMPDIR}
     doSomething
+    asyncCall1
     Log    ${items1} items in '${CURDIR}' and ${items2} items in '${TEMPDIR}'
-
-Count Items in Directory3
-    ${items1} =    Count Items In Directory    ${CURDIR}
-    ${items2} =    Count Items In Directory    ${TEMPDIR}
-    doSomething
-    Log    ${items1} items in '${CURDIR}' and ${items2} items in '${TEMPDIR}'
-
 
 Count Items in Directory5
     ${items1} =    Count Items In Directory    ${CURDIR}

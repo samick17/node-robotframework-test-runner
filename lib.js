@@ -19,6 +19,20 @@
 		},
 		doc: 'Returns the number of items in the directory specified by `path`.'
 	}, {
+		name: 'asyncCall1',
+		fn: function () {
+			var lib = this;
+			return new Promise((resolve, reject) => {
+				lib.output.info('start async call');
+				lib.output.info(Object.keys(lib));
+				setTimeout(function() {
+					lib.output.info('async call complete');
+					resolve();
+				}, 500);
+			});
+		},
+		doc: 'Returns the number of items in the directory specified by `path`.'
+	}, {
 		name: 'doSomething',
 		fn: function() {
 			console.log('doSomething....');

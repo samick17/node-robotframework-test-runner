@@ -8,6 +8,7 @@
 	var readdir = require('promise').denodeify(fs.readdir);
 	var robot = require('robotremote');
 	var assert = require('assert');
+	var config = require('../config.json');
 	function createRobotLibrary(keywordDefs) {
 		var lib = {};
 		keywordDefs.forEach(function(defData) {
@@ -19,7 +20,11 @@
 	}
 	function initByDefs(libDefinitions) {
 		var lib = module.exports = createRobotLibrary(libDefinitions);
-		var server = new robot.Server([lib], { host: 'localhost', port: 8270 });
+		var server = new robot.Server([lib], {
+			host: config.host,
+			port: config.port,
+			timeout: config.timeout
+		});
 	}
 
 	var api = module.exports = {
