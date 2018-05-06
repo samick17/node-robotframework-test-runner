@@ -4,6 +4,7 @@
  */
 //
 (function() {
+	const Utils = require('./utils');
 	const colorMap = {
 		Black: '0;30',
 		Red: '0;31',
@@ -35,6 +36,14 @@
 		} else {
 			return text;
 		}
+	}
+	function defineStringPrototype(key) {
+		Utils.definePropety(String.prototype, 'clr'+key, function() {
+			return toColoredText(this, key);
+		});
+	}
+	for(var key in colorMap) {
+		defineStringPrototype(key);
 	}
 	module.exports = {
 		toColorCode: toColorCode,

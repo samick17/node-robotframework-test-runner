@@ -43,5 +43,26 @@
 			done();
 		});
 
+		it('clr color', function(done) {
+			assert.equal('\u001b[0;30mtest\u001b[0m', 'test'.clrBlack());
+			assert.equal('\u001b[0;31mtest\u001b[0m', 'test'.clrRed());
+			assert.equal('\u001b[0;32mtest\u001b[0m', 'test'.clrGreen());
+			assert.equal('\u001b[0;33mtest\u001b[0m', 'test'.clrBrown());
+			assert.equal('\u001b[0;34mtest\u001b[0m', 'test'.clrBlue());
+			assert.equal('\u001b[0;35mtest\u001b[0m', 'test'.clrPurple());
+			assert.equal('\u001b[0;36mtest\u001b[0m', 'test'.clrCyan());
+			assert.equal('\u001b[0;37mtest\u001b[0m', 'test'.clrLightGray());
+			assert.equal('\u001b[1;30mtest\u001b[0m', 'test'.clrDarkGray());
+			assert.equal('\u001b[1;31mtest\u001b[0m', 'test'.clrLightRed());
+			assert.equal('\u001b[1;32mtest\u001b[0m', 'test'.clrLightGreen());
+			assert.equal('\u001b[1;33mtest\u001b[0m', 'test'.clrYellow());
+			assert.equal('\u001b[1;34mtest\u001b[0m', 'test'.clrLightBlue());
+			assert.equal('\u001b[1;35mtest\u001b[0m', 'test'.clrLightPurple());
+			assert.equal('\u001b[1;36mtest\u001b[0m', 'test'.clrLightCyan());
+			assert.equal('\u001b[1;37mtest\u001b[0m', 'test'.clrWhite());
+			assert.equal('\u001b[0mtest\u001b[0m', 'test'.clrNoColor());
+			done();
+		});
+
 	});
 })();

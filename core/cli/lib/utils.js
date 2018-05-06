@@ -7,19 +7,25 @@
 	const fs = require('fs');
 	const path = require('path');
 
-	try {
-		Object.defineProperty(String.prototype, 'format', {
-			enumerable: false,
-			value: function() {
-				var s = this,
-				i = arguments.length;
-				while (i--)
-					s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-				return s;
-			}
-		});
-	} catch(e) {
+	function definePropety(objPrototype, name, fn) {
+		try {
+			Object.defineProperty(objPrototype, name, {
+				enumerable: false,
+				value: function() {
+					return fn.apply(this, arguments);
+				}
+			});
+		} catch(e) {
+		}
 	}
+
+	definePropety(String.prototype, 'format', function() {
+		var s = this,
+		i = arguments.length;
+		while (i--)
+			s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+		return s;
+	});
 	function zfill(value, ch, length) {
 		var result = value.toString();
 		for(var i = result.length; i < length; i++) {
@@ -94,6 +100,11 @@
 			});
 			return currentModule;
 		},
+		clean: function(model) {
+			for(var i in model) {
+				delete model[i];
+			}
+		},
 		init: function(model, data) {
 			var keys = data ? Object.keys(data) : [];
 			for(var i in keys) {
@@ -127,12 +138,33 @@
 			}
 			return args;
 		},
-		zfill: zfill
+		zfill: zfill,
+		parseArgsFromText: function(argumentsText) {
+			var re = /-([a-zA-Z0-9]*)\s"(.*?)"/g;
+			var m;
+			var args = {};
+			var lastArg;
+			while((m = re.exec(argumentsText)) !== null) {
+				if (m.index === re.lastIndex) {
+					re.lastIndex++;
+				}
+
+				m.forEach((match, index) => {
+					switch(index) {
+						case 1:
+						lastArg = match;
+						break;
+						case 2:
+						if(lastArg) {
+							args[lastArg] = match;
+							lastArg = undefined;
+						}
+						break;
+					}
+				});
+			}
+			return args;
+		},
+		definePropety: definePropety
 	};
 })();
-
-if(module.id === '.') {
-	var api = module.exports;
-	var chunk = 'asdas';
-	console.log(api.isDefined(chunk, 'undefined'));
-}

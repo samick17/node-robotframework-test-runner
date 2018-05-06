@@ -4,11 +4,10 @@
  */
 //
 (function() {
-	var fs = require('fs');
-	var readdir = require('promise').denodeify(fs.readdir);
-	var robot = require('robotremote');
-	var assert = require('assert');
-	var config = require('../config.json');
+	const fs = require('fs');
+	const robot = require('robotremote');
+	const config = require('../config.json');
+	const Utils = require('./cli/lib/utils');
 	function createRobotLibrary(keywordDefs) {
 		var lib = {};
 		keywordDefs.forEach(function(defData) {
@@ -25,6 +24,7 @@
 			port: config.port,
 			timeout: config.timeout
 		});
+		return server;
 	}
 
 	var api = module.exports = {
@@ -37,13 +37,18 @@
 		}
 	};
 	if(module.id === '.') {
-		var libPath = process.argv[2];
-		if(typeof libPath === 'string') {
-			if(fs.existsSync(libPath)) {
+		const path = require('path');
+		var argumentsText = process.argv.slice(2).join(' ');
+		var args = Utils.parseArgsFromText(argumentsText);
+		var libPath = args.lib;
+		if((path.isAbsolute(libPath) && fs.existsSync(libPath)) || fs.existsSync(path.resolve(path.join(__dirname, libPath)))) {
+			switch(args.m) {
+				default:
 				api.init(require(libPath));
-			} else {
-				throw new Error(`Library: ${libPath} not found!`);
+				break;
 			}
+		} else {
+			throw new Error(`Library: ${libPath} not found!`);
 		}
 	}
 })();

@@ -10,7 +10,10 @@
     "start": "node ./index.js",
     "runtest": "node ./index.js -test",
     "robot": "robot ./testcases/test.txt",
-    "test": "node_modules/.bin/mocha ./test/**/*.mocha.js"
+    "test": "node_modules/.bin/mocha ./test/**/*.mocha.js",
+    "server": "node ./core/lib.js -lib \"\"\"\"../lib.js\"\"\"\"",
+    "clean": "node ./core/misc/cleanup.js",
+    "gentrendreport": "node ./index.js -genstatistics"
   },
   "keywords": [
     "RobotFramework",

@@ -1,1 +1,10 @@
 *** Settings ***
+Suite Setup
+Suite Teardown
+Test Setup
+Test Teardown
+Force Tags        tag1
+Metadata          meta-testcases-name    meta name    # meta name comment
+
+*** Variables ***
+${lang}           en
