@@ -13,11 +13,17 @@
 	const TestOutputParser = require('./core/misc/testoutput-parser');
 	const TestUtils = require('./core/misc/test-utils');
 
-	const testRunner = TestUtils.createTestRunner(__dirname);
+	const testRunner = TestUtils.createTestRunner(process.cwd());
 	const ErrorMessageOfPathNotSpecified = 'Path of {0} doesn\'t exists!\nPlease specify test arguments properly: start <libPath> <testcasesPath> [testCaseName] [includeTags] [excludeTags]';
 	function runTest(lib, testcasePath, testCaseName, includeTags, excludeTags) {
 		return new Promise((resolve, reject) => {
 			var errMessageArgs = [];
+			if(!path.isAbsolute(lib)) {
+				lib = path.resolve(path.join(process.cwd(), lib));
+			}
+			if(!path.isAbsolute(testcasePath)) {
+				testcasePath = path.resolve(path.join(process.cwd(), testcasePath));
+			}
 			if(!fs.existsSync(lib)) {
 				errMessageArgs.push(`<libPath>: "${lib}"`);
 			}
@@ -123,10 +129,19 @@
 		CLI.printMenu();
 		CLI.start();
 	}
-	var handler = ModeHandler[process.argv[2]];
-	if(handler) {
-		handler();
-	} else {
-		DefaultHandler();
-	}
+	
+	module.exports = {
+		runcli: function() {
+			var handler = ModeHandler[process.argv[2]];
+			if(handler) {
+				handler();
+			} else {
+				DefaultHandler();
+			}
+		},
+		run: function(libPath, testcasesDirectoryPath, testCaseName, includeTags, excludeTags) {
+			return runTest(libPath, testcasesDirectoryPath, testCaseName, includeTags, excludeTags);
+		}
+	};
+
 })();

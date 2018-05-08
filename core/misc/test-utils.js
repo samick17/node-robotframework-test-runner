@@ -89,6 +89,7 @@
 		this.countOfTotalTests = 0;
 		this.countOfPassedTests = 0;
 		this.countOfFailedTests = 0;
+		this.status = 'FAIL';
 		this.isComplete = false;
 		this.rpcProc = undefined;
 		this.testProc = undefined;
@@ -120,69 +121,69 @@
 		testContext.excludeTags = excludeTags;
 		var workingDirectory = testContext.workingDirectory;
 		return new Promise((resolve) => {
-				var absLibPath = path.isAbsolute(libPath) ? libPath : path.resolve(path.join(workingDirectory, libPath));
-				var args = {
-					lib: absLibPath,
-					t: testCaseName,
-					i: includeTags,
-					e: excludeTags
-				};
-				var argArray = buildArgumentArray(args);
-				testContext.rpcProc = forkProcess(path.join(__dirname, '../lib.js'), argArray, {
-					cwd: workingDirectory
-				});
-				var testOutputPath = testContext.generateTestOutputPath();
-				testContext.testProc = runProcess('pybot -d '+testOutputPath+' '+testScriptPath, {
-					cwd: workingDirectory,
-					onData: function(data) {
-						var args;
-						if((args = /^Output:(.*)$/gm.exec(data))) {
-							var fPath = args[1].trim();
-							testContext.setOutputPath(fPath);
-						} else if((args = /^Log:(.*)$/gm.exec(data))) {
-							var fPath = args[1].trim();
-							testContext.setLogPath(fPath);
-						} else if((args = /^Report:(.*)$/gm.exec(data))) {
-							var fPath = args[1].trim();
-							testContext.setTestPath(fPath);
-						} else if((args = /(\d+)\scritical tests,\s(\d+)\spassed,\s(\d+)\sfailed/.exec(data))) {
-							var testResultArray = data.split('\n');
-							testContext.countOfTotalCriticalTests = parseInt(args[1]);
-							testContext.countOfPassedCriticalTests = parseInt(args[2]);
-							testContext.countOfFailedCriticalTests = parseInt(args[3]);
-							if(testResultArray.length >= 2) {
-								if((args = /(\d+)\stests total,\s(\d+)\spassed,\s(\d+)\sfailed/.exec(testResultArray[1]))) {
-									testContext.countOfTotalTests = parseInt(args[1]);
-									testContext.countOfPassedTests = parseInt(args[2]);
-									testContext.countOfFailedTests = parseInt(args[3]);
-									testContext.status = testContext.countOfTotalTests === testContext.countOfPassedTests ? 'Pass' : 'Fail';
-								}
-							}
-						} else if((args = /.*\| (PASS) \|/.exec(data))) {
-							process.stdout.write(data.replace('PASS', CLIColor.toColoredText('PASS', 'LightGreen')));
-						} else if((args = /.*\| (FAIL) \|/.exec(data))) {
-							process.stdout.write(data.replace('FAIL', CLIColor.toColoredText('FAIL', 'LightRed')));
-						} else {
-							process.stdout.write(data);
-						}
-					},
-					onError: function(data) {
-					},
-					onExit: function(data) {
-						try {
-							testContext.rpcProc.send('exit');
-						} catch(err) {
-						}
-						testContext.rpcProc = undefined;
-						testContext.testProc = undefined;
-
-						testContext.restoreTestNumber()
-						.then(() => {
-							resolve(testContext);
-						});
-					}
-				});
+			var absLibPath = path.isAbsolute(libPath) ? libPath : path.resolve(path.join(workingDirectory, libPath));
+			var args = {
+				lib: absLibPath,
+				t: testCaseName,
+				i: includeTags,
+				e: excludeTags
+			};
+			var argArray = buildArgumentArray(args);
+			testContext.rpcProc = forkProcess(path.join(__dirname, '../lib.js'), argArray, {
+				cwd: workingDirectory
 			});
+			var testOutputPath = testContext.generateTestOutputPath();
+			testContext.testProc = runProcess('pybot -d '+testOutputPath+' '+testScriptPath, {
+				cwd: workingDirectory,
+				onData: function(data) {
+					var args;
+					if((args = /^Output:(.*)$/gm.exec(data))) {
+						var fPath = args[1].trim();
+						testContext.setOutputPath(fPath);
+					} else if((args = /^Log:(.*)$/gm.exec(data))) {
+						var fPath = args[1].trim();
+						testContext.setLogPath(fPath);
+					} else if((args = /^Report:(.*)$/gm.exec(data))) {
+						var fPath = args[1].trim();
+						testContext.setTestPath(fPath);
+					} else if((args = /(\d+)\scritical test.?,\s(\d+)\spassed,\s(\d+)\sfailed/.exec(data))) {
+						var testResultArray = data.split('\n');
+						testContext.countOfTotalCriticalTests = parseInt(args[1]);
+						testContext.countOfPassedCriticalTests = parseInt(args[2]);
+						testContext.countOfFailedCriticalTests = parseInt(args[3]);
+						if(testResultArray.length >= 2) {
+							if((args = /(\d+)\stest.? total,\s(\d+)\spassed,\s(\d+)\sfailed/.exec(testResultArray[1]))) {
+								testContext.countOfTotalTests = parseInt(args[1]);
+								testContext.countOfPassedTests = parseInt(args[2]);
+								testContext.countOfFailedTests = parseInt(args[3]);
+								testContext.status = testContext.countOfTotalTests === testContext.countOfPassedTests ? 'Pass' : 'Fail';
+							}
+						}
+					} else if((args = /.*\| (PASS) \|/.exec(data))) {
+						process.stdout.write(data.replace('PASS', CLIColor.toColoredText('PASS', 'LightGreen')));
+					} else if((args = /.*\| (FAIL) \|/.exec(data))) {
+						process.stdout.write(data.replace('FAIL', CLIColor.toColoredText('FAIL', 'LightRed')));
+					} else {
+						process.stdout.write(data);
+					}
+				},
+				onError: function(data) {
+				},
+				onExit: function(data) {
+					try {
+						testContext.rpcProc.send('exit');
+					} catch(err) {
+					}
+					testContext.rpcProc = undefined;
+					testContext.testProc = undefined;
+
+					testContext.restoreTestNumber()
+					.then(() => {
+						resolve(testContext);
+					});
+				}
+			});
+		});
 	};
 	function TestRunner(workingDirectory) {
 		this.workingDirectory = workingDirectory;
@@ -203,14 +204,19 @@
 		testRunner.jobs[jobId] = {
 			args: [libPath, testScriptPath, testCaseName, includeTags, excludeTags]
 		};
-		function executeJobs(callback) {
+		var errors = [];
+		var jobContexts = [];
+		function executeJobs(callback, doneCallback) {
 			var startTime = new Date().getTime();
 			var currentJobId = testRunner.jobOrders[0];
 			if(typeof currentJobId === 'undefined') {
-				callback();
+				if(doneCallback) {
+					doneCallback(null, jobContexts);
+				}
 			} else {
 				var jobContext = testRunner.jobs[currentJobId];
 				var newTextContext = new TestContext(testRunner.workingDirectory);
+				jobContexts.push(jobContext);
 				return newTextContext.start.apply(newTextContext, jobContext.args)
 				.then((result) => {
 					testRunner.jobOrders.splice(0, 1);
@@ -228,17 +234,23 @@
 				}, (err) => {
 					console.log();
 					process.stdout.write(err.message.clrLightRed()+'\n>');
-					callback();
+					errors.push(err);
+					callback(null, jobContext);
 				});
 			}
 		}
 		if(testRunner.jobPromise) {
 			return testRunner.jobPromise;
 		} else {
-			testRunner.jobPromise = new Promise((resolve) => {
+			testRunner.jobPromise = new Promise((resolve, reject) => {
 				executeJobs(() => {
 					delete testRunner.jobPromise;
-					resolve();
+				}, (errors, context) => {
+					if(errors.length) {
+						reject(errors);
+					} else {
+						resolve(context);
+					}
 				});
 			});
 			return testRunner.jobPromise;

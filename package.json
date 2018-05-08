@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "start": "node ./index.js",
+    "start": "node ./test-runner.js",
     "runtest": "node ./index.js -test",
     "robot": "robot ./testcases/test.txt",
     "test": "node_modules/.bin/mocha ./test/**/*.mocha.js",
