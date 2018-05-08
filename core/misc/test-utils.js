@@ -185,6 +185,14 @@
 			});
 		});
 	};
+	TestContext.prototype.toJson = function() {
+		return {
+			status: this.status,
+			countOfTotalTests: this.countOfTotalTests,
+			countOfPassedTests: this.countOfPassedTests,
+			countOfFailedTests: this.countOfFailedTests
+		};
+	};
 	function TestRunner(workingDirectory) {
 		this.workingDirectory = workingDirectory;
 		this.jobId = 0;
@@ -211,13 +219,12 @@
 			var currentJobId = testRunner.jobOrders[0];
 			if(typeof currentJobId === 'undefined') {
 				if(doneCallback) {
-					doneCallback(null, jobContexts);
+					doneCallback(errors, jobContexts);
 				}
 			} else {
 				var jobContext = testRunner.jobs[currentJobId];
-				var newTextContext = new TestContext(testRunner.workingDirectory);
-				jobContexts.push(jobContext);
-				return newTextContext.start.apply(newTextContext, jobContext.args)
+				var newTestContext = new TestContext(testRunner.workingDirectory);
+				return newTestContext.start.apply(newTestContext, jobContext.args)
 				.then((result) => {
 					testRunner.jobOrders.splice(0, 1);
 					delete testRunner.jobs[currentJobId];
@@ -230,7 +237,8 @@
 					console.log(`Result: ${status}`);
 					console.log(`Elapsed Time: ${elapsedTime}`);
 					console.log('==============================================================================');
-					executeJobs(callback);
+					jobContexts.push(newTestContext.toJson());
+					executeJobs(callback, doneCallback);
 				}, (err) => {
 					console.log();
 					process.stdout.write(err.message.clrLightRed()+'\n>');
@@ -246,7 +254,7 @@
 				executeJobs(() => {
 					delete testRunner.jobPromise;
 				}, (errors, context) => {
-					if(errors.length) {
+					if(errors && errors.length) {
 						reject(errors);
 					} else {
 						resolve(context);
