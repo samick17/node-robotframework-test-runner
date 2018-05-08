@@ -1,6 +1,6 @@
 {
   "name": "node-robotframework-test-runner",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Robotframework for nodejs",
   "main": "index.js",
   "directories": {

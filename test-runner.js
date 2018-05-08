@@ -1,3 +1,3 @@
 (function() {
-	require('./index').run();
+	require('./index').runcli();
 })();
