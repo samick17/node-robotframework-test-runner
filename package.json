@@ -21,7 +21,10 @@
     "Keyword Driven",
     "TestAutomation"
   ],
-  "author": "Samick.Hsu <boneache@gmail.com>",
+  "author": {
+    "name": "Samick",
+    "email": "boneache@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.1",
