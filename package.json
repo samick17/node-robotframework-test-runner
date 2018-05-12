@@ -6,6 +6,10 @@
   "directories": {
     "lib": "lib"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samick17/node-robotframework-test-runner"
+  },
   "scripts": {
     "start": "node ./test-runner.js",
     "runtest": "node ./index.js -test",
@@ -18,8 +22,9 @@
   "keywords": [
     "RobotFramework",
     "Testing",
-    "Keyword Driven",
-    "TestAutomation"
+    "Keyword Driven Testing",
+    "TestAutomation",
+    "Automation"
   ],
   "author": {
     "name": "Samick",
