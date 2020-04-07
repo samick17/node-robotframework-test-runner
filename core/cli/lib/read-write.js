@@ -4,7 +4,6 @@
  */
 //
 (function() {
-  const Promise = require('bluebird');
   const os = require('os');
   const Clipboard = require('./clipboard');
   const Utils = require('./utils');
